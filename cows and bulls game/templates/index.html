@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cows and Bulls Game</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        #history {
+            margin-top: 20px;
+            text-align: left;
+            display: inline-block;
+        }
+        #history ul {
+            list-style: none;
+            padding: 0;
+        }
+        #history li {
+            font-size: 16px;
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Welcome to Cows and Bulls Game</h1>
+    <p>Try to guess the 3-digit number with unique digits.</p>
+
+    <input type="text" id="guessInput" placeholder="Enter a 3-digit number" maxlength="3">
+    <button id="submitBtn">Submit</button>
+    <button id="restartBtn">Restart</button>  <!-- Restart button -->
+
+    <div id="result"></div>
+    <p id="chancesLeft"></p>
+
+    <div id="history">
+        <h3>Guess History</h3>
+        <ul id="guessList"></ul>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $("#submitBtn").click(function() {
+                submitGuess();
+            });
+
+            $("#restartBtn").click(function() {
+                restartGame();
+            });
+
+            $("#guessInput").keypress(function(event) {
+                if (event.which === 13) { // Enter key pressed
+                    submitGuess();
+                }
+            });
+        });
+
+        function submitGuess() {
+            let guess = $("#guessInput").val().trim();
+
+            if (!/^\d{3}$/.test(guess)) {
+                $("#result").text("Please enter a valid 3-digit number.").css("color", "red");
+                return;
+            }
+
+            $.ajax({
+                url: "/guess",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ "guess": guess }),
+                success: function(response) {
+                    if (response.error) {
+                        $("#result").text(response.message).css("color", "red");
+                        return;
+                    }
+                    if (response.win) {
+                        $("#result").text(response.message).css("color", "green");
+                        $("#chancesLeft").text("");
+                        $("#guessInput").prop("disabled", true);
+                        $("#submitBtn").prop("disabled", true);
+                    } else if (response.gameOver) {
+                        $("#result").text(response.message).css("color", "red");
+                        $("#chancesLeft").text("");
+                        $("#guessInput").prop("disabled", true);
+                        $("#submitBtn").prop("disabled", true);
+                    } else {
+                        $("#result").text(`Cows: ${response.cows}, Bulls: ${response.bulls}`).css("color", "blue");
+                        $("#chancesLeft").text(`Chances left: ${response.chances}`);
+                    }
+
+                    // Update guess history
+                    updateHistory(response.history);
+
+                    $("#guessInput").val(""); // Clear input field
+                },
+                error: function() {
+                    $("#result").text("An error occurred. Please try again.").css("color", "red");
+                }
+            });
+        }
+
+        function restartGame() {
+            $.ajax({
+                url: "/restart",
+                type: "POST",
+                success: function(response) {
+                    $("#result").text("Game restarted!").css("color", "black");
+                    $("#chancesLeft").text(`Chances left: ${response.chances}`);
+                    $("#guessList").empty();
+                    $("#guessInput").prop("disabled", false);
+                    $("#submitBtn").prop("disabled", false);
+                },
+                error: function() {
+                    $("#result").text("Failed to restart game. Try again.").css("color", "red");
+                }
+            });
+        }
+
+        function updateHistory(history) {
+            let historyList = $("#guessList");
+            historyList.empty(); // Clear previous history
+            
+            history.forEach(entry => {
+                historyList.append(`<li>Guess: ${entry.guess} - Bulls: ${entry.bulls}, Cows: ${entry.cows}</li>`);
+            });
+        }
+    </script>
+
+</body>
+</html>
