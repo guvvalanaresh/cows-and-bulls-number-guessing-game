@@ -18,25 +18,33 @@ This is a **Cows and Bulls** number-guessing game built using **Flask** (Python)
 
 ---
 
-📸 Screenshots
+## 📸 Screenshots
 ![Screenshot 2025-02-26 191644](https://github.com/user-attachments/assets/700eb6fb-dafd-4216-b38c-caafcd52fbed)
 
+---
 
 ## 📂 Project Structure
 
-/cows and bulls game/--app.y
-                    /templates/--index.html
 
-## Run the Flask
-python app.py
-After running the command, open your browser and go to:
-http://127.0.0.1:5000/
+### 📌 **Explanation of Files & Folders**
+✔ **`app.py`** → Flask backend, handles game logic & API.  
+✔ **`README.md`** → Documentation explaining the project.  
+✔ **`/templates/index.html`** → UI for user input & display.   
+✔ **`/screenshots/`** → Stores game screenshots for README. 
+---
 
-🛠 Features
-✅ Real-time gameplay using AJAX (no page refresh needed).
-✅ Bulls and Cows logic implemented for accurate hints.
-✅ Guess history displayed dynamically to help players track progress.
-✅ Restart button to start a fresh game.
-✅ Session-based state management for each player.
-✅ Input validation to ensure only valid 3-digit numbers are entered.
+
+
+---
+## 🛠 Features
+
+✔ **Interactive Gameplay:** Play without refreshing the page, thanks to AJAX.  
+✔ **Cows & Bulls Logic:** Get hints with bulls (correct digit & position) and cows (correct digit, wrong position).  
+✔ **Guess History Tracking:** See all your previous guesses along with bulls & cows count.  
+✔ **Chances Counter:** Displays remaining attempts to make your best guess.  
+✔ **Restart Game Anytime:** Reset the game with a single click without refreshing the page.  
+✔ **Session-Based State:** Each session stores a new random number and track of guesses.  
+✔ **Input Validation:** Ensures only 3-digit numbers with unique digits are allowed.  
+✔ **Clean & Simple UI:** User-friendly design with easy-to-read game information.  
+
 
